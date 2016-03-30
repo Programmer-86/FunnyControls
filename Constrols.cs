@@ -88,7 +88,7 @@ namespace App4
                 {
                     paint.SetStyle(Paint.Style.Stroke);
                     paint.Color = Color.Blue;
-                    paint.StrokeWidth = 7;
+                    paint.StrokeWidth = 20;
                     double grad = 360 * (timeToEnd - game.time) / timeToLife;
                     canvas.DrawArc(new RectF(pos.X - radius - 2, pos.Y - radius - 2, pos.X + radius + 2, pos.Y + radius + 2), 270, (int)Math.Round(grad), true, paint);
                     render.TextureDraw(canvas, new Rect(pos.X - radius, pos.Y - radius, pos.X + radius, pos.Y + radius), textureIdChecked);
