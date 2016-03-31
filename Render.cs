@@ -94,6 +94,7 @@ namespace App4
                 if (game.time <= timeToShowLevel)
                 {
                     //canvas.DrawBitmap(levelsImg[game.GetLevel()], new Rect(0, 0, 10000, 10000), new Rect(0, 0, canvas.Width, canvas.Height), null);
+                    game.DeactivateAll();
                     canvas.DrawBitmap(levelsImg[0], new Rect(0, 0, 10000, 10000), new Rect(0, 0, canvas.Width, canvas.Height), null);
                 }
                 else
@@ -108,13 +109,16 @@ namespace App4
 
                 //DEBUG
                 paint.Color = Color.Blue;
-                paint.SetStyle(Paint.Style.Stroke);
+                paint.SetStyle(Paint.Style.Fill);
                 paint.StrokeWidth = 1;
+                paint.TextSize = 15;
                 for (int i = 0; i < game.controls.Length; i++)
                 {
                     if (game.controls[i] != null && game.controls[i].enable)
                         canvas.DrawText("controls[" + i + "] = " + game.controls[i].pos.X + "_" + game.controls[i].pos.Y, 10, 90 + i * 40, paint);
                 }
+                paint.TextSize = 100;
+                canvas.DrawText(game.score.ToString(), canvas.Width/2, 100, paint);
 
             }
 
@@ -122,6 +126,7 @@ namespace App4
             paint.Color = Color.White;
             paint.StrokeWidth = 1;
             frameCount++;
+            paint.TextSize = 15;
             canvas.DrawText("FPS = " + fps + " (" + canvas.Width + " x " + canvas.Height + ")", 10, 10, paint);
 
 

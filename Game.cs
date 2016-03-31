@@ -14,6 +14,7 @@ namespace App4
 {
     public class GameMain
     {
+
         public Render render { get; set; }
         public GameControl[] controls { get; set; }
         public Random random { get; set; }
@@ -23,8 +24,8 @@ namespace App4
 
         public GameMain()
         {
-            controls = new GameControl[20];
             random = new Random();
+            controls = new GameControl[20];
             time = 0;
             score = 0;
             level = 0;
@@ -38,7 +39,6 @@ namespace App4
                 switch (score)
                 {
                     case 0:
-                        render.SetTimeToShowLevel(time + 3);
                         controls[0] = new SimpleButton(this);
                         ScoreInc();
                         break;
@@ -70,46 +70,43 @@ namespace App4
                         controls[7] = new SimpleButton(this);
                         ScoreInc();
                         break;
+
                     case 40:
                         LevelInc();
                         DeactivateAll();
-                        SimpleButton.SetRadius(100);
-                        SimpleButton.SetTimeToLife(2);
-                        render.SetTimeToShowLevel(time + 3);
+                        SimpleButton.SetRadius(170);
+                        SimpleButton.SetTimeToLife(2.7);
                         ScoreInc();
                         break;
                     case 45:
                         controls[8] = new SimpleButton(this);
                         ScoreInc();
                         break;
-                    case 50:
+                    case 60:
                         controls[9] = new SimpleButton(this);
                         ScoreInc();
                         break;
-                    case 55:
-                        controls[10] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 60:
-                        controls[11] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 65:
-                        controls[12] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 70:
-                        controls[13] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 75:
-                        controls[14] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
+
                     case 80:
                         LevelInc();
                         DeactivateAll();
-                        render.SetTimeToShowLevel(time + 3);
+                        SimpleButton.SetRadius(140);
+                        SimpleButton.SetTimeToLife(2.4);
+                        ScoreInc();
+                        break;
+                    case 85:
+                        controls[10] = new SimpleButton(this);
+                        ScoreInc();
+                        break;
+                    case 100:
+                        controls[11] = new SimpleButton(this);
+                        ScoreInc();
+                        break;
+                    case 150:
+                        LevelInc();
+                        DeactivateAll();
+                        SimpleButton.SetRadius(100);
+                        SimpleButton.SetTimeToLife(2.0);
                         ScoreInc();
                         break;
                     default:
@@ -121,6 +118,7 @@ namespace App4
         void LevelInc()
         {
             level++;
+            render.SetTimeToShowLevel(time + 3);
         }
 
         public void DeactivateAll()
