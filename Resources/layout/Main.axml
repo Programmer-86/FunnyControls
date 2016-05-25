@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:p1="http://schemas.android.com/apk/res/android"
     p1:minWidth="25px"
+    p1:orientation="vertical"
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
@@ -11,7 +12,7 @@
         p1:layout_height="wrap_content"
         p1:layout_above="@+id/relativeLayout1"
         p1:id="@+id/button1"
-        p1:layout_marginTop="778.5dp"
+        p1:layout_marginTop="150.5dp"
         p1:layout_marginLeft="20.0dp" />
     <Button
         p1:text="Button"
@@ -19,7 +20,7 @@
         p1:layout_height="wrap_content"
         p1:layout_above="@+id/relativeLayout1"
         p1:id="@+id/button2"
-        p1:layout_marginTop="718.0dp"
+        p1:layout_marginTop="100.0dp"
         p1:layout_marginLeft="20.0dp" />
     <Button
         p1:text="@string/Play"
@@ -27,6 +28,6 @@
         p1:layout_height="wrap_content"
         p1:layout_above="@+id/relativeLayout1"
         p1:id="@+id/button3"
-        p1:layout_marginTop="659.0dp"
+        p1:layout_marginTop="50.0dp"
         p1:layout_marginLeft="20.0dp" />
 </RelativeLayout>

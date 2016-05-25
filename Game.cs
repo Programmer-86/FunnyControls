@@ -22,13 +22,52 @@ namespace App4
         public int score { get; set; }
         public int level { get; set; }
 
+        public int sum { get; set; }
+        public int showSum;
+
+        public int minValue;
+        public int maxValue;
+        public int maxClick;
+        public int lastScore;
+
+
+
         public GameMain()
         {
             random = new Random();
             controls = new GameControl[20];
             time = 0;
+            ResumeValue();
+        }
+
+        public void ResumeValue()
+        {
+            sum = 0;
             score = 0;
             level = 0;
+            lastScore = 0;
+            RecountVar();
+            for (int i = 1; i < controls.Length; i++)
+            {
+                controls[i] = null;
+            }
+            Game(render);
+        }
+
+        void RecountVar()
+        {
+            minValue = 1 + level * 5;
+            maxValue = 10 + level * level;
+            maxClick = 5 + level;
+        }
+
+        int GetNullControlIndex()
+        {
+            for (int i = 1; i < controls.Length; i++)
+            {
+                if (controls[i] == null) return i;
+            }
+            return 1;
         }
 
         public void Game(Render ren)
@@ -39,78 +78,20 @@ namespace App4
                 switch (score)
                 {
                     case 0:
-                        controls[0] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 5:
-                        controls[1] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 10:
-                        controls[2] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 15:
-                        controls[3] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 20:
-                        controls[4] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 25:
-                        controls[5] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 30:
-                        controls[6] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 35:
-                        controls[7] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-
-                    case 40:
-                        LevelInc();
-                        DeactivateAll();
-                        SimpleButton.SetRadius(170);
-                        SimpleButton.SetTimeToLife(2.7);
-                        ScoreInc();
-                        break;
-                    case 45:
-                        controls[8] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 60:
-                        controls[9] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-
-                    case 80:
-                        LevelInc();
-                        DeactivateAll();
-                        SimpleButton.SetRadius(140);
-                        SimpleButton.SetTimeToLife(2.4);
-                        ScoreInc();
-                        break;
-                    case 85:
-                        controls[10] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 100:
-                        controls[11] = new SimpleButton(this);
-                        ScoreInc();
-                        break;
-                    case 150:
-                        LevelInc();
-                        DeactivateAll();
-                        SimpleButton.SetRadius(100);
-                        SimpleButton.SetTimeToLife(2.0);
+                        controls[0] = new MainButton(this);
+                        controls[GetNullControlIndex()] = new SimpleButton(this);
                         ScoreInc();
                         break;
                     default:
                         break;
+                }
+
+                if (score >= lastScore + 100)
+                {
+                    level++;
+                    RecountVar();
+                    lastScore = score;
+                    controls[GetNullControlIndex()] = new SimpleButton(this);
                 }
             }
         }

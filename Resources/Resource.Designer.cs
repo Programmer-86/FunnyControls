@@ -57,10 +57,13 @@ namespace App4
 			public const int Loser = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int SimpleButton = 2130837508;
+			public const int Miniature = 2130837508;
 			
 			// aapt resource value: 0x7f020005
-			public const int SimpleButton_checked = 2130837509;
+			public const int SimpleButton = 2130837509;
+			
+			// aapt resource value: 0x7f020006
+			public const int SimpleButton_checked = 2130837510;
 			
 			static Drawable()
 			{
@@ -84,6 +87,9 @@ namespace App4
 			// aapt resource value: 0x7f060003
 			public const int button3 = 2131099651;
 			
+			// aapt resource value: 0x7f060004
+			public const int imageView1 = 2131099652;
+			
 			// aapt resource value: 0x7f060000
 			public const int relativeLayout1 = 2131099648;
 			
@@ -105,6 +111,9 @@ namespace App4
 			
 			// aapt resource value: 0x7f030001
 			public const int Main = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int Miniature = 2130903042;
 			
 			static Layout()
 			{

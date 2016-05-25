@@ -21,10 +21,20 @@ namespace App4
         Bitmap[] levelsImg = new Bitmap[1];
         Bitmap[] bitmaps = new Bitmap[10];
 
+        public bool showMenu;
+        bool hideMenu;
+        public Color _backgroundColor = Color.Rgb(34, 44, 54);
+        public Color _whiteButton = Color.Rgb(255, 255, 255);
+        PointF[] _playButton;
+
+        Color _animationColor;
+
         public Render(Context context, GameMain game) : base(context)
         {
+
             var metrics = Resources.DisplayMetrics;
-            screenSize = new Point(metrics.WidthPixels, metrics.HeightPixels);
+            //screenSize = new Point(metrics.HeightPixels, metrics.WidthPixels);
+            screenSize = new Point(Math.Max(metrics.HeightPixels, metrics.WidthPixels), Math.Min(metrics.HeightPixels, metrics.WidthPixels));
             game.render = this;
 
             fps = 60;
@@ -35,15 +45,42 @@ namespace App4
             
             this.game = game;
 
+            ShowMenu();
+
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.InPreferredConfig = Bitmap.Config.Rgb565;
             options.InSampleSize = 1;
 
-            bitmaps[0] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.SimpleButton, options);
-            bitmaps[1] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.SimpleButton_checked, options);
-            bitmaps[2] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Background, options);
+            //bitmaps[0] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.SimpleButton, options);
+            //bitmaps[1] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.SimpleButton_checked, options);
+            //bitmaps[2] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Background, options);
+
+            _playButton = new[]
+                {
+                    new PointF((float)(screenSize.X / 2 + Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Sin(Math.PI * (-30) / 180)), (float)(screenSize.Y / 2 - Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Cos(Math.PI * (-30) / 180))),
+                    new PointF((float)(screenSize.X / 2 + Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Sin(Math.PI * (90) / 180)), (float)(screenSize.Y / 2 - Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Cos(Math.PI * (90) / 180))),
+                    new PointF((float)(screenSize.X / 2 + Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Sin(Math.PI * (210) / 180)), (float)(screenSize.Y / 2 - Math.Min(screenSize.X, screenSize.Y) * 0.18 * Math.Cos(Math.PI * (210) / 180)))
+                };
 
             levelsImg[0] = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Level1, options);
+        }
+
+        public void ShowMenu()
+        {
+            showMenu = true;
+            hideMenu = false;
+            _animationColor = _backgroundColor;
+        }
+
+        public void HideMenu()
+        {
+            hideMenu = true;
+        }
+
+        public void StartGame()
+        {
+            showMenu = false;
+            game.ResumeValue();
         }
 
         public void TextureDraw(Canvas canvas, Rect rect, int TextureId)
@@ -76,10 +113,16 @@ namespace App4
             paint.SetStyle(Paint.Style.Stroke);
             paint.StrokeWidth = 1;
 
-            if (game.controls != null)
+
+            if (!showMenu && game.controls != null)
             {
                 //BackGround
-                canvas.DrawBitmap(bitmaps[2], new Rect(0, 0, 10000, 10000), new Rect(0, 0, canvas.Width, canvas.Height), null);
+                //canvas.DrawBitmap(bitmaps[2], new Rect(0, 0, 10000, 10000), new Rect(0, 0, canvas.Width, canvas.Height), null);
+                paint.SetStyle(Paint.Style.Fill);
+                paint.Color = _backgroundColor;
+                canvas.DrawRect(new Rect(0, 0, canvas.Width, canvas.Height), paint);
+
+                game.controls[0].GenerateEvent();
 
                 //Draw game controls
                 for (int i = 0; i < game.controls.Length; i++)
@@ -100,11 +143,11 @@ namespace App4
                 else
                 {
                     //GenerateEvent
-                    for (int i = 0; i < game.controls.Length; i++)
-                    {
-                        if (game.controls[i] != null && game.controls[i].enable)
-                            game.controls[i].GenerateEvent();
-                    }
+                    //for (int i = 0; i < game.controls.Length; i++)
+                    //{
+                    //    if (game.controls[i] != null && game.controls[i].enable)
+                    //        game.controls[i].GenerateEvent();
+                    //}
                 }
 
                 //DEBUG
@@ -115,12 +158,66 @@ namespace App4
                 for (int i = 0; i < game.controls.Length; i++)
                 {
                     if (game.controls[i] != null && game.controls[i].enable)
-                        canvas.DrawText("controls[" + i + "] = " + game.controls[i].pos.X + "_" + game.controls[i].pos.Y, 10, 90 + i * 40, paint);
+                        canvas.DrawText("controls[" + i + "] = " + game.controls[i].pos.X + "_" + game.controls[i].pos.Y, 100, 90 + i * 40, paint);
                 }
                 paint.TextSize = 100;
-                canvas.DrawText(game.score.ToString(), canvas.Width/2, 100, paint);
+                canvas.DrawText(game.score.ToString(), canvas.Width / 2, 100, paint);
+
+            } else
+            {
+                //Draw menu
+
+                //Фон
+                paint.SetStyle(Paint.Style.Fill);
+                paint.Color = _backgroundColor;
+                canvas.DrawRect(new Rect(0, 0, canvas.Width, canvas.Height), paint);
+
+                paint.TextSize = Convert.ToInt32(Math.Min(canvas.Width, canvas.Height) * 0.09);
+                paint.Color = _animationColor;
+                if (game.score > 1)
+                    canvas.DrawText("Score = " + game.score, canvas.Width / 3, canvas.Height / 6, paint);
+                else
+                    canvas.DrawText("Arithmetic run", canvas.Width / 3, canvas.Height / 6, paint);
+
+                //Главная кнопка
+                paint.SetStyle(Paint.Style.Fill);
+                if (!hideMenu)
+                    paint.Color = _animationColor;
+                else
+                    paint.Color = _whiteButton;
+                canvas.DrawCircle(canvas.Width/2, canvas.Height/2, (float)(Math.Min(canvas.Width, canvas.Height) * 0.28), paint);
+                paint.Color = _backgroundColor;
+                canvas.DrawCircle(canvas.Width / 2, canvas.Height / 2, (float)(Math.Min(canvas.Width, canvas.Height) * 0.23), paint);
+
+                var path = new Path();
+                path.MoveTo(_playButton[0].X, _playButton[0].Y);
+                for (var i = 1; i < _playButton.Length; i++)
+                {
+                    path.LineTo(_playButton[i].X, _playButton[i].Y);
+                }
+                paint.SetStyle(Paint.Style.Fill);
+                paint.Color = _animationColor;
+                canvas.DrawPath(path, paint);
+
+                //Дополнительные кнопки (4 штуки)
+                for (int i = 0; i < 5; i++)  
+                {
+                    if (i != 2)
+                    {
+                        paint.Color = _animationColor;
+                        canvas.DrawCircle((canvas.Width / 5) * i + (canvas.Width / 10), canvas.Height - canvas.Height / 5, (float)(Math.Min(canvas.Width, canvas.Height) * 0.11), paint);
+                        paint.Color = _backgroundColor;
+                        canvas.DrawCircle((canvas.Width / 5) * i + (canvas.Width / 10), canvas.Height - canvas.Height / 5, (float)(Math.Min(canvas.Width, canvas.Height) * 0.09), paint);
+                    }
+                }
+
+                //Плавное появление
+                if (!hideMenu) AnimateColor(ref _animationColor, _whiteButton, 2);
+                else
+                    if (AnimateColor(ref _animationColor, _backgroundColor, 4)) StartGame();
 
             }
+
 
             //FPS
             paint.Color = Color.White;
@@ -142,6 +239,28 @@ namespace App4
             PostInvalidate();
         }
 
+        bool AnimateColor(ref Color animateColor, Color color, int speed)
+        {
+            for (int i = 0; i < speed; i++)
+            {
+                if (animateColor != color)
+                {
+                    if (animateColor.R < color.R) animateColor.R++;
+                    else
+                        if (animateColor.R > color.R) animateColor.R--;
+                    if (animateColor.G < color.G) animateColor.G++;
+                    else
+                        if (animateColor.G > color.G) animateColor.G--;
+                    if (animateColor.B < color.B) animateColor.B++;
+                    else
+                        if (animateColor.B > color.B) animateColor.B--;
+                }
+                else
+                    return true;
+            }            
+            return false;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             for (int i = 0; i < game.controls.Length; i++)
@@ -151,6 +270,16 @@ namespace App4
                     game.controls[i].Touch(e);
                 }
             }
+
+            //Обрабатываем клики по меню
+            //if (showMenu && Math.Sqrt(
+            //            (e.GetX() - screenSize.X / 2.0) * (e.GetX() - screenSize.X / 2.0) +
+            //            (e.GetY() - screenSize.Y / 2.0) * (e.GetY() - screenSize.Y / 2.0)) <= 250
+            //            )
+            //{
+            //    HideMenu();
+            //}
+
             return true;
         }
 
