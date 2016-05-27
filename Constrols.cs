@@ -29,6 +29,7 @@ namespace App4
         public virtual float ReturnSize() { return 0; }
 
         public virtual int GetValue() { return -10; }
+        public virtual void SetValue(int a) { }
 
         public virtual void DrawControl(Render render, Canvas canvas, Paint paint) { }
 
@@ -80,6 +81,10 @@ namespace App4
         Color _mainColor;
         float radius;
         int value = 0;
+        string ansver = "";
+
+        double timeToEnd;
+        double timeToLife = 7;
 
         public override float ReturnSize()
         {
@@ -131,6 +136,7 @@ namespace App4
             if (value == 0 && game.controls != null && game.controls[1] != null && !game.render.showMenu)
             {
                 game.sum = 0;
+                ansver = "";
                 for (int i = 0; i < game.random.Next(1, game.maxClick + 1); i++)
                 {
                     int b = game.random.Next(game.controls.Length - 1) + 1;
@@ -138,16 +144,40 @@ namespace App4
                     {
                         b = game.random.Next(game.controls.Length - 1) + 1;
                     }
-                    value += game.controls[b].GetValue();
-                    game.showSum = value;
+                    if (game.controls[b].enable)
+                    {
+                        value += game.controls[b].GetValue();
+                        ansver += game.controls[b].GetValue() + " ";
+                        game.showSum = value;
+                    }
+                    else
+                        game.controls[b] = null;
                 }
+                timeToEnd = game.time + timeToLife;
             }
+
+            //Не успел во время
+            if (game.controls != null && game.controls[1] != null && !game.render.showMenu && game.time > timeToEnd)
+                game.render.ShowMenu();
+
+        }
+
+        public override void SetValue(int a)
+        {
+            value = a;
         }
 
         public override void DrawControl(Render render, Canvas canvas, Paint paint)
         {
             if (enable)
             {
+
+                paint.SetStyle(Paint.Style.Stroke);
+                paint.Color = new Color(game.render._whiteButton.R, game.render._whiteButton.G - (byte)(game.render._whiteButton.G * (game.time - timeToEnd) / timeToLife), game.render._whiteButton.B - (byte)(game.render._whiteButton.B * (game.time - timeToEnd) / timeToLife));
+                paint.StrokeWidth = 40;
+                double grad = 360 * (timeToEnd - game.time) / timeToLife;
+                canvas.DrawArc(new RectF(pos.X - radius - 2, pos.Y - radius - 2, pos.X + radius + 2, pos.Y + radius + 2), 270, (int)Math.Round(grad), true, paint);
+
                 _backgroundColor = render._backgroundColor;
                 _mainColor = render._whiteButton;
 
@@ -161,7 +191,12 @@ namespace App4
                 paint.Color = game.render._whiteButton;
                 paint.TextSize = 100;
                 paint.TextAlign = Paint.Align.Center;
-                canvas.DrawText((game.showSum - game.sum).ToString(), pos.X, pos.Y + paint.TextSize / 2 - 10, paint);
+
+                game.showSum = value - game.sum;
+                canvas.DrawText(game.showSum.ToString(), pos.X, pos.Y + paint.TextSize / 2 - 10, paint);
+                //paint.TextSize = 30;
+                //canvas.DrawText(ansver, pos.X, pos.Y + radius / 2, paint);
+
             }
         }
 
@@ -219,6 +254,7 @@ namespace App4
             }
 
             value = game.random.Next(game.minValue, game.maxValue+1);
+            if (value % 10 == 0) value++;
 
             if (i <= 200)
             {
@@ -281,8 +317,10 @@ namespace App4
                         (pos.Y - y) * (pos.Y - y)) <= radius
                     )
             {
-                //Попадание по кнопке
+                //Попадание по кнопке                
+                game.render._buttonClickSound.Start();
                 game.sum += value;
+                if (game.showSum < 0) game.render.ShowMenu();
                 //game.ScoreInc();
             }
         }

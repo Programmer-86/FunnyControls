@@ -35,7 +35,7 @@ namespace App4
         public GameMain()
         {
             random = new Random();
-            controls = new GameControl[20];
+            controls = new GameControl[4];
             time = 0;
             ResumeValue();
         }
@@ -58,16 +58,22 @@ namespace App4
         {
             minValue = 1 + level * 5;
             maxValue = 10 + level * level;
-            maxClick = 5 + level;
+            maxClick = 5 + level / 2;
         }
 
         int GetNullControlIndex()
         {
             for (int i = 1; i < controls.Length; i++)
             {
-                if (controls[i] == null) return i;
+                if (controls[i] == null || !controls[i].enable) return i;
             }
-            return 1;
+
+            int index = 1;
+            for (int i = 2; i < controls.Length; i++)
+            {
+                if (controls[index].GetValue() > controls[i].GetValue()) index = i;
+            }
+            return index;
         }
 
         public void Game(Render ren)
@@ -79,6 +85,7 @@ namespace App4
                 {
                     case 0:
                         controls[0] = new MainButton(this);
+                        controls[GetNullControlIndex()] = new SimpleButton(this);
                         controls[GetNullControlIndex()] = new SimpleButton(this);
                         ScoreInc();
                         break;
@@ -92,6 +99,8 @@ namespace App4
                     RecountVar();
                     lastScore = score;
                     controls[GetNullControlIndex()] = new SimpleButton(this);
+                    controls[0].SetValue(0);
+                    controls[0].GenerateEvent();
                 }
             }
         }

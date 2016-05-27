@@ -4,6 +4,7 @@ using Android.Graphics;
 using Android.Views;
 using System.Timers;
 using System.Diagnostics;
+using Android.Media;
 
 namespace App4
 {
@@ -29,8 +30,15 @@ namespace App4
 
         Color _animationColor;
 
+        public MediaPlayer _buttonClickSound;
+        MediaPlayer _backgroundMusic;
+
         public Render(Context context, GameMain game) : base(context)
         {
+            _buttonClickSound = MediaPlayer.Create(context, Resource.Raw.ddd);
+            _backgroundMusic = MediaPlayer.Create(context, Resource.Raw.background);
+            _backgroundMusic.Completion += delegate { _backgroundMusic.Start(); };
+            //_backgroundMusic.Start();
 
             var metrics = Resources.DisplayMetrics;
             //screenSize = new Point(metrics.HeightPixels, metrics.WidthPixels);
@@ -116,6 +124,7 @@ namespace App4
 
             if (!showMenu && game.controls != null)
             {
+
                 //BackGround
                 //canvas.DrawBitmap(bitmaps[2], new Rect(0, 0, 10000, 10000), new Rect(0, 0, canvas.Width, canvas.Height), null);
                 paint.SetStyle(Paint.Style.Fill);
@@ -151,15 +160,17 @@ namespace App4
                 }
 
                 //DEBUG
-                paint.Color = Color.Blue;
-                paint.SetStyle(Paint.Style.Fill);
-                paint.StrokeWidth = 1;
-                paint.TextSize = 15;
-                for (int i = 0; i < game.controls.Length; i++)
-                {
-                    if (game.controls[i] != null && game.controls[i].enable)
-                        canvas.DrawText("controls[" + i + "] = " + game.controls[i].pos.X + "_" + game.controls[i].pos.Y, 100, 90 + i * 40, paint);
-                }
+                //paint.Color = Color.Blue;
+                //paint.SetStyle(Paint.Style.Fill);
+                //paint.StrokeWidth = 1;
+                //paint.TextSize = 15;
+                //for (int i = 0; i < game.controls.Length; i++)
+                //{
+                //    if (game.controls[i] != null && game.controls[i].enable)
+                //        canvas.DrawText("controls[" + i + "] = " + game.controls[i].pos.X + "_" + game.controls[i].pos.Y, 100, 90 + i * 40, paint);
+                //}
+
+                paint.Color = _whiteButton;
                 paint.TextSize = 100;
                 canvas.DrawText(game.score.ToString(), canvas.Width / 2, 100, paint);
 
@@ -209,6 +220,13 @@ namespace App4
                         paint.Color = _backgroundColor;
                         canvas.DrawCircle((canvas.Width / 5) * i + (canvas.Width / 10), canvas.Height - canvas.Height / 5, (float)(Math.Min(canvas.Width, canvas.Height) * 0.09), paint);
                     }
+                    if (i == 4)
+                    {
+                        paint.TextSize = Convert.ToInt32(Math.Min(canvas.Width, canvas.Height) * 0.09);
+                        paint.Color = _animationColor;
+                        paint.TextAlign = Paint.Align.Center;
+                        canvas.DrawText("Exit", (canvas.Width / 5) * i + (canvas.Width / 10), canvas.Height - canvas.Height / 5 + paint.TextSize / 2, paint);
+                    }
                 }
 
                 //Плавное появление
@@ -224,13 +242,13 @@ namespace App4
             paint.StrokeWidth = 1;
             frameCount++;
             paint.TextSize = 15;
-            canvas.DrawText("FPS = " + fps + " (" + canvas.Width + " x " + canvas.Height + ")", 10, 10, paint);
+            //canvas.DrawText("FPS = " + fps + " (" + canvas.Width + " x " + canvas.Height + ")", 10, 10, paint);
 
 
             //Time
             timeStep = 1.0 / fps;
             if (timeStep <= 1) { game.time += timeStep; } else { game.time += 0.0001; }
-            canvas.DrawText("Time = " + game.time, 10, 50, paint);
+            //canvas.DrawText("Time = " + game.time, 10, 50, paint);
 
             //Проверка score
             game.Game(this);
@@ -272,13 +290,13 @@ namespace App4
             }
 
             //Обрабатываем клики по меню
-            //if (showMenu && Math.Sqrt(
-            //            (e.GetX() - screenSize.X / 2.0) * (e.GetX() - screenSize.X / 2.0) +
-            //            (e.GetY() - screenSize.Y / 2.0) * (e.GetY() - screenSize.Y / 2.0)) <= 250
-            //            )
-            //{
-            //    HideMenu();
-            //}
+            if (showMenu && Math.Sqrt(
+                        (e.GetX() - ((screenSize.X / 5) * 4 + (screenSize.X / 10))) * (e.GetX() - ((screenSize.X / 5) * 4 + (screenSize.X / 10))) +
+                        (e.GetY() - (screenSize.Y - screenSize.Y / 5)) * (e.GetY() - (screenSize.Y - screenSize.Y / 5))) <= (Math.Min(screenSize.X, screenSize.Y) * 0.11)
+                        )
+            {
+                 Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+            }
 
             return true;
         }

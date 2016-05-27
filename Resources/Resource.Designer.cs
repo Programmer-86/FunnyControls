@@ -132,7 +132,10 @@ namespace App4
 			public const int aaa = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int ddd = 2130968577;
+			public const int background = 2130968577;
+			
+			// aapt resource value: 0x7f040002
+			public const int ddd = 2130968578;
 			
 			static Raw()
 			{

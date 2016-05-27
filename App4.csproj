@@ -53,6 +53,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="LoseActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Render.cs" />
     <Compile Include="Constrols.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -106,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Miniature.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\raw\background.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
